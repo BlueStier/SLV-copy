@@ -1,6 +1,6 @@
 # SLV-copy
 
-[![Licence](https://raw.githubusercontent.com/BlueStier/SLV-copy/main/img/licence.PNG)
+![Licence](https://raw.githubusercontent.com/BlueStier/SLV-copy/main/img/licence.svg)
 
 [Github : BlueStier/SLV-copy](https://github.com/BlueStier/SLV-copy)
 
