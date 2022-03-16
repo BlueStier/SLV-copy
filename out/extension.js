@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
-//import des modules
+//import of modules
 const vscode = require("vscode");
 const path = require("path");
 const os_1 = require("os");
 const message_1 = require("./message");
 const file_1 = require("./file");
-//Préparation des constantes de configurations
+//Preparation of configuration constants
 const CONF = vscode.workspace.getConfiguration("SLV-copy");
 const useDayFolder = CONF.get("useDayFolder");
 const keyValueFolder = CONF.get("keyValueFolder");
@@ -15,89 +15,103 @@ const exclude = CONF.get("excludeFolder");
 const authorizedFileType = CONF.get("authorizedFileType");
 let filePathVsCode = process.env.APPDATA?.charAt(0).toLowerCase() + process.env.APPDATA?.slice(1);
 const vscodeSet = filePathVsCode + '\\Code\\User\\settings.json';
-// préparation des variables système
+const numberOfSauvPerso = CONF.get("numberOfSauvPerso");
+// preparing system variables
 const USER = (0, os_1.homedir)().split("\\")[2];
-//constante de message
+//message constant
 const MESS = new message_1.Message();
 const FI = new file_1.File();
 function run(event, bool, message = "") {
-    //vérifie si le fichier n'est pas nouveau et n'est pas le fichier de config de VSCODE
-    if (event.fileName !== "Untitled-1" && event.fileName !== vscodeSet) {
-        //récupération du type de fichier
-        let extensionFile = path.extname(event.fileName);
-        //vérification de l'extension du fichier si le fichier doit être sauvegardé
+    //get file name via event
+    let name = "";
+    if (bool) {
+        name = event.fileName;
+    }
+    else {
+        name = event;
+    }
+    //checks if the file is not new and is not the config file of VSCODE
+    if (name !== "Untitled-1" && name !== vscodeSet) {
+        //file type recovery
+        let extensionFile = path.extname(name);
+        //checking the file extension if the file should be saved
         if (authorizedFileType.includes(extensionFile)) {
-            //si les dossiers ne sont pas définis
+            //if the folders are not defined
             if (!keyValueFolder || keyValueFolder.length === 0) {
                 //message pour accéder au fichier setting.json de vscode
                 MESS.param(true);
             }
             else {
                 let isExiste = false;
-                //si les dossiers sont définis boucle sur la clé pour savoir si le dossier est dans la config
+                //if folders are set loop on key to find out if folder is in config
                 for (var item in keyValueFolder) {
-                    //le dossier du fichier n'est pas exclu (absent de excludeFolder)
-                    if (!exclude.includes(path.dirname(event.fileName))) {
-                        //le dossier du fichier est dans la config (présent dans keyValueFolder)
-                        if (event.fileName.split(keyValueFolder[item][0]).length > 1) {
+                    //the folder of the file is not excluded (missing from excludeFolder)
+                    if (!exclude.includes(path.dirname(name))) {
+                        //the file folder is in the config (present in keyValueFolder)
+                        if (name.split(keyValueFolder[item][0]).length > 1) {
                             isExiste = true;
-                            FI.setAll(keyValueFolder[item][1], useDayFolder, event.fileName, USER);
+                            FI.setAll(keyValueFolder[item][1], useDayFolder, name, USER);
                             if (bool) {
-                                //sauvegarde automatique
+                                //auto save
                                 FI.save();
-                                MESS.information(event.fileName);
+                                MESS.information(name);
                             }
                             else {
-                                FI.savePerso(message);
-                                MESS.information(event.fileName, false);
+                                FI.savePerso(message, numberOfSauvPerso);
+                                MESS.information(name, false);
                             }
                         }
                     }
                 }
                 if (isExiste === false) {
-                    //Le dossier n'est pas dans la config
+                    //The folder is not in the config
                     MESS.param(true);
                 }
             }
         }
         else {
-            //L'extension du fichier n'est pas dans la config
+            //The file extension is not in the config
             MESS.param(false);
         }
     }
 }
-//Activation de l'extension
+//Activating the extension
 function activate(context) {
     const SUB = context.subscriptions;
-    //autosauvegarde à l'ouverture
+    //autosave on open
     let array = vscode.workspace.textDocuments;
     for (let i in array) {
         run(array[i], true);
     }
-    // END confirme sauvegarde des fichiers ouverts dans l'éditeur
     SUB.push(
-    //Ouverture d'un fichier
+    //Opening a file
     vscode.workspace.onDidOpenTextDocument((event) => {
         run(event, true);
     }));
     //commands
     SUB.push(vscode.commands.registerCommand('SLV-copy.copy', () => 
-    //récupération du fichier ouvert dans l'éditeur de texte
-    run(vscode.workspace.textDocuments[0], false)));
-    SUB.push(vscode.commands.registerCommand('SLV-copy.manuelle', async () => 
-    //récupération du fichier ouvert dans l'éditeur de texte
-    MESS.showInputBox().then(value => {
-        if (!value) {
-            return;
+    //recovery of the file opened in the text editor
+    run(vscode.workspace.textDocuments[0], true)));
+    SUB.push(vscode.commands.registerCommand('SLV-copy.manuelle', async (uri) => {
+        let fileName = "";
+        if (typeof uri === "undefined") {
+            fileName = vscode.workspace.textDocuments[0].fileName;
         }
         else {
-            run(vscode.workspace.textDocuments[0], false, value);
+            fileName = uri.fsPath;
         }
-    })));
+        //recovery of the file opened in the text editor
+        MESS.showInputBox().then(value => {
+            if (!value) {
+                return;
+            }
+            else {
+                run(fileName, false, value);
+            }
+        });
+    }));
     //commands
-    SUB.push(vscode.commands.registerCommand('SLV-copy.cleanUp', async () => 
-    //récupération du fichier ouvert dans l'éditeur de texte
-    MESS.showQuickPick(keyValueFolder).then((value) => {
+    SUB.push(vscode.commands.registerCommand('SLV-copy.cleanUp', async () => MESS.showQuickPick(keyValueFolder).then((value) => {
         if (value !== undefined) {
             FI.clean(vscode.workspace.getConfiguration("SLV-copy"), value.label);
         }

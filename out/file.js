@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.File = void 0;
 /* Class Message
-TODO: centralise les action de copy et de création de dossier si nécessaire
+TODO: centralizes copy and folder creation actions if necessary
 */
 const fs = require("fs");
 const path = require("path");
@@ -28,7 +28,7 @@ class File {
     }
     /*END constructor*/
     /**set_all
-    *TODO: setter de tous les paramètres d'un object de la classe File
+    *TODO: setter of all parameters of an object of class File
     *@sync
     *@public
     *@param {string} folder
@@ -44,7 +44,7 @@ class File {
     }
     /*END set_all*/
     /**config()
-     *TODO: vérifie la présence du paramètre dans setting.json
+     *TODO: checks the presence of the parameter in setting.json
      *@sync
      *@public
      *@param {Boolean} param
@@ -55,7 +55,7 @@ class File {
             let set = fs.readFileSync(process.env.APPDATA + '\\Code\\User\\settings.json', 'utf-8');
             let str = param ? "SLV-copy.keyValueFolder" : "SLV-copy.authorizedFileType";
             let array = set.split(str);
-            //le paramètre n'est pas présent dans settings.json
+            //parameter is not present in settings.json
             if (array.length < 2) {
                 let destruct = set.split(",");
                 let str2 = "";
@@ -75,143 +75,170 @@ class File {
     }
     /*END config()*/
     /**save()
-     *TODO: génère la copie
+     *TODO: generates the copy
      *@sync
      *@public
      *@param {String} message
+     *@param {number} num
      *@retrun {void}
      */
-    save(message = "") {
-        //on vérifie si la demande de sous dossier journalier est active
+    save(message = "", num = 0) {
+        //we check if the daily sub-folder request is active
         let pathDirectory = this.folder + this.user;
         if (this.daly) {
             let date = new Date();
             pathDirectory += "/" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         }
-        //Vérifie si le dossier de sauvegarde n'existe pas on le crée
+        //Check if the backup folder does not exist, create it
         if (!fs.existsSync(pathDirectory)) {
             fs.mkdirSync(pathDirectory, {
                 recursive: true
             });
         }
-        //récupération du nom du fichier
+        //file name recovery
         let name = path.basename(this.pathFile);
         //récupération de l'extension
         let ext = path.extname(this.pathFile);
-        //récupération du nom du fichier
+        //extension recovery
         let splitName = name.split(".")[0];
         let concatName = "";
         if (message === "") {
-            //sauvegarde auto ou sauvegarde manuelle mais l'utilisateur n'a pas laissé de message
+            //autosave or manual save but the user did not leave a message
             let date2 = new Date();
-            //concatenation du chemin vers le repo et du nom avec timstamp
+            //concatenation of path to repo and name with timstamp
             concatName = pathDirectory + "/" + splitName + "-" + date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + "-" + date2.getHours() + "h" + date2.getMinutes() + "m" + date2.getSeconds() + "s" + ext;
         }
         else {
-            //message perso
+            //personal message
             concatName = pathDirectory + "/" + splitName + message + ext;
-            //enregistre dans SLVcopy-lock.json
-            this.slvCopyUpdate(concatName);
+            //saves to SLVcopy-lock.json
+            this.slvCopyUpdate(concatName, num);
         }
         try {
             fs.copyFileSync(this.pathFile, concatName, fs.constants.COPYFILE_FICLONE);
         }
         catch {
-            //dossier de réception non dispo
+            //reception folder not available
             let mess = new message_1.Message();
             mess.error();
         }
     }
     /*END save()*/
     /**SlvCopyUpdate()
-    *TODO: insert le nom du fichier dans la sauvegarde
+    *TODO: insert file name into backup
     *@sync
     *@public
     *@param {string}name
     *@retrun {void}
     */
-    slvCopyUpdate(concatName) {
+    slvCopyUpdate(concatName, num) {
+        let nameFile = this.pathFile.split("\\")[this.pathFile.split("\\").length - 1];
         try {
             let slvJson = JSON.parse(fs.readFileSync(this.folder + "/SLVcopy-lock.json", 'utf-8'));
-            let check = false;
-            slvJson.forEach(element => {
-                if (element[0] === this.pathFile) {
-                }
-                else {
-                    check = true;
-                }
+            let check = true;
+            Object.entries(slvJson).forEach(([key, value]) => {
+                Object.entries(slvJson[key]).forEach(([key1, value1]) => {
+                    if (value1 === this.pathFile) {
+                        if (slvJson[key][1].length > num) {
+                            let rest = slvJson[key][1].length - num;
+                            slvJson[key][1] = slvJson[key][1].slice(rest);
+                        }
+                        slvJson[key][1].push(concatName);
+                        check = false;
+                    }
+                });
             });
+            if (check) {
+                let insert = [
+                    nameFile, [concatName]
+                ];
+                slvJson.push(insert);
+            }
+            fs.writeFileSync(this.folder + "/SLVcopy-lock.json", JSON.stringify(slvJson));
         }
         catch {
             let insert = [
-                [this.pathFile, [concatName]]
+                [nameFile, [concatName]]
             ];
             fs.writeFileSync(this.folder + "/SLVcopy-lock.json", JSON.stringify(insert));
         }
     }
     /*END SlvCopyUpdate()*/
     /**savePerso()
-    *TODO: génère la copie en tennant compte du message
+    *TODO: generates the copy taking into account the message
     *@sync
     *@public
     *@param {Sring}message
+    *@param {number} num
     *@retrun {void}
     */
-    savePerso(message) {
+    savePerso(message, num) {
         message = message.replace(/ /g, "_");
         message = `_SAUV_PERSO_SLV-Copy_${message}`;
-        this.save(message);
+        this.save(message, num);
     }
     /*END savePerso()*/
     /**clean()
-     *TODO: nettoie le repo
+     *TODO: clean the repo
      *@sync
      *@public
      *@param {vscode.WorkspaceConfiguration} conf;
      *@retrun {void}
      */
     clean(conf, value) {
-        const deleteDelay = conf.get("deleteDelay");
-        const numberOfSauvPerso = conf.get("numberOfSauvPerso");
-        let files = this.recursiveDirectory(value);
-        let folders = this.recursiveDirectory(value, false);
-        let savePerso = [];
-        let save = [];
-        files.forEach((file) => {
-            if (file.includes("_SAUV_PERSO_SLV-Copy_")) {
-                savePerso.push(file);
-            }
-            else {
-                save.push(file);
-            }
-        });
-        //suppression des fichiers de sauvegarde automatique
-        let time = (24 * 60 * 60 * 1000 * 30) * deleteDelay;
-        let limit = Date.now() - time;
-        let nbFile = 0;
-        let nbFolder = 0;
-        save.forEach((file) => {
-            const { birthtimeMs } = fs.statSync(file);
-            if (birthtimeMs < limit) {
-                fs.unlinkSync(file);
-                nbFile++;
-            }
-        });
-        //suppression de répertoire si vide
-        folders.forEach((folder) => {
-            try {
-                fs.rmdirSync(folder);
-                nbFolder++;
-            }
-            catch (err) {
-            }
-        });
-        let mem = new message_1.Message;
-        mem.informationDelete(nbFile, nbFolder);
+        if (value === "All") {
+            const keyValueFolder = conf.get("keyValueFolder");
+            keyValueFolder.forEach((value) => {
+                this.clean(conf, value[1].toString());
+            });
+        }
+        else {
+            const deleteDelay = conf.get("deleteDelay");
+            const numberOfSauvPerso = conf.get("numberOfSauvPerso");
+            let files = this.recursiveDirectory(value);
+            let folders = this.recursiveDirectory(value, false);
+            let savePerso = [];
+            let save = [];
+            files.forEach((file) => {
+                if (!file.includes("SLVcopy-lock.json")) {
+                    if (file.includes("_SAUV_PERSO_SLV-Copy_")) {
+                        savePerso.push(file);
+                    }
+                    else {
+                        save.push(file);
+                    }
+                }
+            });
+            //delete autosave files
+            let time = (24 * 60 * 60 * 1000 * 30) * deleteDelay;
+            let limit = Date.now() - time;
+            let nbFile = 0;
+            let nbFolder = 0;
+            save.forEach((file) => {
+                const { birthtimeMs } = fs.statSync(file);
+                if (birthtimeMs < limit) {
+                    fs.unlinkSync(file);
+                    nbFile++;
+                }
+            });
+            //manual save file deletion
+            let nbFilePerso = this.deleteSavePerso(savePerso, numberOfSauvPerso);
+            //remove directory if empty
+            folders.forEach((folder) => {
+                try {
+                    fs.rmdirSync(folder);
+                    nbFolder++;
+                }
+                catch (err) {
+                }
+            });
+            let mem = new message_1.Message;
+            mem.informationDelete(nbFile, nbFolder, nbFilePerso, value);
+        }
     }
     /*END clean()*/
     /**recursiveDirectory()
-    *TODO: liste tous les fichiers et sous dossiers du chemin spécifié et retourne un tableau
+    *TODO: lists all files and subfolders in the specified path and returns an array
     *@sync
     *@private
     *@param {string} dirPath;
@@ -238,6 +265,46 @@ class File {
             }
         });
         return arrayOfFiles;
+    }
+    /*END recursiveDirectory()*/
+    /**deleteSavePerso
+     *TODO: remove manual saves
+     *@sync
+     *@private
+     *@param {Array} savePerso;
+     *@param {number} num;
+     *@retrun {number} nbFile;
+     */
+    deleteSavePerso(savePerso, num) {
+        let nbFilePerso = 0;
+        try {
+            let slvJson = JSON.parse(fs.readFileSync(this.folder + "/SLVcopy-lock.json", 'utf-8'));
+            savePerso.forEach((file) => {
+                let fileRestruc = file.replace(/\\/g, "/");
+                let splitPerso = file.split("\\");
+                let namePerso = splitPerso[splitPerso.length - 1];
+                let splitInit = file.split("_SAUV_PERSO_SLV-Copy_");
+                let nameInit = splitInit[0].split("\\")[splitInit[0].split("\\").length - 1] + path.extname(namePerso);
+                Object.entries(slvJson).forEach(([key, value]) => {
+                    Object.entries(slvJson[key]).forEach(([key1, value1]) => {
+                        // verification of the size of the backup if there has been a change in the number of backups to keep                       
+                        if (slvJson[key][1].length > num) {
+                            let rest = slvJson[key][1].length - num;
+                            slvJson[key][1] = slvJson[key][1].slice(rest);
+                        }
+                        if (value1 === nameInit) {
+                            if (!value1.includes(fileRestruc)) {
+                                fs.unlinkSync(file);
+                                nbFilePerso++;
+                            }
+                        }
+                    });
+                });
+            });
+        }
+        catch {
+        }
+        return nbFilePerso;
     }
 }
 exports.File = File;

@@ -24,15 +24,15 @@
 	"contributes": {
 		"commands": [{
 			"command": "SLV-copy.copy",
-			"title": "SLV-copy : sauvegarder"
+			"title": "SLV-copy : manual backup"
 		},
 		{
 			"command": "SLV-copy.manuelle",
-			"title": "SLV-copy : sauvegarde manuelle"
+			"title": "SLV-copy : manual backup"
 		},
 		{
 			"command": "SLV-copy.cleanUp",
-			"title": "SLV-copy : nettoyage du répertoire"
+			"title": "SLV-copy : directory cleaning"
 		}
 	],
 		"configuration": {
@@ -41,41 +41,42 @@
 				"SLV-copy.useDayFolder": {
 					"type": "boolean",
 					"default": false,
-					"description": "Créer un sous dossier journalier de sauvegarde"
+					"description": "Create a daily backup subfolder"
 				},
 				"SLV-copy.deleteDelay": {
 					"type": "number", 
 					"default": 12,
 					"enum" : [3,6,9,12,18,24],
-					"description": "Nombre de mois de sauvegarde, les fichiers ayant une date antérieur seront supprimé du répertoire de sauvegarde (tout utilisateurs confondus) lors de l'utilisation de la commande clean"
+					"description": "Number of months of backup, files with an earlier date will be deleted from the backup directory (all users combined) when using the clean command"
 				},
 				"SLV-copy.numberOfSauvPerso": {
 					"type": "number", 
 					"default": 5,
 					"enum" : [1,2,3,4,5],
-					"description": "Nombre de sauvegarde perso a conservées (de la plus récente à la plus ancienne) lors de l'utilisation de la fonction clean"
+					"description": "Number of personal backups kept (from the most recent to the oldest) when using the clean function"
 				},
 				"SLV-copy.keyValueFolder": {
 					"type": "Array",
 					"default": [],
-					"description": "Array de sauvegarde en fonction du chemin initial des fichiers. Exemple : 'SLV-copy.keyValueFolder': [['c:\\Users\\dossierInitial1\\',C:/Users/dossierSauv1/'],['c:\\Users\\dossierInitial2\\','C:/Users/dossierSauv2/']]"
+					"description": "Backup array based on initial file path. Example: 'SLV-copy.keyValueFolder' : [['c:\\Users\\dossierInitial1\\',C:/Users/dossierSauv1/'],['c:\\Users\\dossierInitial2\\','C:/Users/dossierSauv2/']]"
 				},
 				"SLV-copy.authorizedFileType": {
 					"type": "array",
 					"default": [".html",".css",".scss",".js",".json"],
-					"description": "Array de définition des extension de fichier qui seront sauvegardés. Par défaut : ['html','css','scss','js']."
+					"description": "Array of file extension definitions that will be saved. By default : ['html','css','scss','js']."
 				},
 				"SLV-copy.excludeFolder":{
 					"type": "array",
 					"default":[],
-					"description": "Array d'exclusion de dossier pour que la sauvegarde ne s'effectue pas. Exemple: 'SLV-copy.excludeFolder:['c:\\Users\\dossierInitial1\\','c:\\Users\\dossierInitial2\\']'"
+					"description": "Folder exclusion array so that the backup does not occur. Example : 'SLV-copy.excludeFolder:['c:\\Users\\dossierInitial1\\','c:\\Users\\dossierInitial2\\']'"
 				}
 			}
 		},
 		"menus": {
             "explorer/context": [
                 {
-                    "command": "SLV-copy.manuelle"
+                    "command": "SLV-copy.manuelle",
+					"group":"5_cutcopypaste@1"
                 }
             ]
 		}

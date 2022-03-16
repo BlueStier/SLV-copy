@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = void 0;
 /* Class Message
-TODO: centralise l'affichage des message dans vscode
+TODO: centralize message display in vscode
 */
 const vscode_1 = require("vscode");
 const file_1 = require("./file");
@@ -12,7 +12,7 @@ class Message {
     }
     /*END constructor*/
     /**information()
-   *TODO: Affiche un message à l'utilisateur en fonction du paramètre passé
+   *TODO: Displays a message to the user based on the passed parameter
    *@sync
    *@public
    *@param {String} str
@@ -20,12 +20,12 @@ class Message {
    *@retrun {void}
    */
     information(str, bool = true) {
-        let answer = bool ? `Le fichier ${str} a été sauvegardé automatiquement` : `Votre sauvegarde manuelle du fichier ${str} a été faite.`;
+        let answer = bool ? `The file ${str} was saved automatically` : `Your manual backup of the ${str} file has been made.`;
         vscode_1.window.showInformationMessage(answer);
     }
     /*END information()*/
     /**param()
-    *TODO: Affiche un message à l'utilisateur pour accéder à setting.json
+    *TODO: Displays a message to the user to access setting.json
     *@async
     *@public
     *@param {Boolean} param
@@ -35,14 +35,14 @@ class Message {
         let mess = "";
         let bool = true;
         if (param) {
-            mess = "le chemin du fichier n'est pas présent dans le dossier de config. Enregistrez le dossier dans SLV-copy.keyValueFolder pour le paramétrer ou dans SLV-copy.excludeFolder pour l'exclure";
+            mess = "the file path is not present in the config folder. Save the folder in SLV-copy.keyValueFolder to set it or in SLV-copy.excludeFolder to exclude it";
         }
         else {
-            mess = "L'extension du fichier n'est pas reconnue. Enregistrez cette extension dans SLV-copy.authorizedFileType.";
+            mess = "The file extension is not recognized. Save this extension in SLV-copy.authorizedFileType.";
             bool = false;
         }
-        const answer = await vscode_1.window.showWarningMessage(mess, "configurer dans setting.json");
-        if (answer === "configurer dans setting.json") {
+        const answer = await vscode_1.window.showWarningMessage(mess, "configure in setting.json");
+        if (answer === "configure in setting.json") {
             let file = new file_1.File();
             file.config(bool);
             let uri = vscode_1.Uri.file(process.env.APPDATA + '\\Code\\User\\settings.json');
@@ -58,25 +58,26 @@ class Message {
    *@retrun {void}
    */
     error() {
-        vscode_1.window.showErrorMessage("La sauvegarde a échouée. Le dossier de destination n'est pas accessible");
+        vscode_1.window.showErrorMessage("Backup failed. The destination folder is not accessible");
     }
     /*END error()*/
     /**showInputBox()
-    *TODO: Ouvre la fenêtre de dialogue et retourne une promesse
+    *TODO: Open the dialog window and return a promise
     *@sync
     *@public
     *@param {void}
     *@retrun {Promesse} showInputBox
     */
     showInputBox() {
+        ;
         return vscode_1.window.showInputBox({
-            prompt: "Tappez le titre de votre sauvegarde. Attention, ne pas mettre de ponctuation",
-            placeHolder: 'Message pour votre sauvegarde manuelle'
+            prompt: "Type the title of your backup. Be careful, do not put punctuation",
+            placeHolder: 'Message for your manual backup'
         });
     }
     /*END showInputBox*/
     /**showQuickPick()
-     *TODO: Ouvre la fenêtre de sélection et la retourne
+     *TODO: Open the selection window and return it
      *@sync
      *@public
      *@param {Array < string >} keyValueFolder
@@ -88,30 +89,32 @@ class Message {
             keyValueFolder.forEach((value) => {
                 optionFolder.push(value[1].toString());
             });
-            optionFolder.push("Tous");
+            optionFolder.push("All");
         }
         else {
-            optionFolder.push("Tous");
+            optionFolder.push("All");
         }
         let options = optionFolder.map(res => { return { label: `${res}` }; });
         return vscode_1.window.showQuickPick(options);
     }
     /*END showQuickPick*/
     /**informationDelete
-     *TODO: Ouvre la fenêtre de sélection et la retourne
+     *TODO: Open the selection window and return it
      *@async
      *@public
      *@param {number} nbFile
      *@param {number} nbFolder
+     *@param {number} nbFilePerso
+     *@param {string} value
      *@retrun {void}
      */
-    informationDelete(nbFile, nbFolder) {
+    informationDelete(nbFile, nbFolder, nbFilePerso, value) {
         let str = "";
-        if (nbFile === 0 && nbFolder === 0) {
-            str = "Pas de fichiers ni de dossiers supprimé";
+        if (nbFile === 0 && nbFolder === 0 && nbFilePerso === 0) {
+            str = `No deleted files or folders on ${value}`;
         }
         else {
-            str = `${nbFile} fichier(s) et ${nbFolder} dossiers supprimés`;
+            str = `${nbFile} automatic backup file(s), ${nbFilePerso} manual backup files and ${nbFolder} deleted folders on ${value}`;
         }
         vscode_1.window.showInformationMessage(str);
     }
