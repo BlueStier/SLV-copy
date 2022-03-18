@@ -2,7 +2,7 @@
 	"name": "slvcopy",
 	"displayName": "SLV-copy",
 	"description": "Generates a backup file when opened in the text editor",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"publisher": "BlueStier",
 	"engines": {
 		"vscode": "^1.42.0"
@@ -22,19 +22,20 @@
 	},
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [{
-			"command": "SLV-copy.copy",
-			"title": "SLV-copy : manual backup"
-		},
-		{
-			"command": "SLV-copy.manuelle",
-			"title": "SLV-copy : manual backup"
-		},
-		{
-			"command": "SLV-copy.cleanUp",
-			"title": "SLV-copy : directory cleaning"
-		}
-	],
+		"commands": [
+			{
+				"command": "SLV-copy.copy",
+				"title": "SLV-copy : manual backup"
+			},
+			{
+				"command": "SLV-copy.manuelle",
+				"title": "SLV-copy : manual backup"
+			},
+			{
+				"command": "SLV-copy.cleanUp",
+				"title": "SLV-copy : directory cleaning"
+			}
+		],
 		"configuration": {
 			"title": "SLV-copy",
 			"properties": {
@@ -44,15 +45,28 @@
 					"description": "Create a daily backup subfolder"
 				},
 				"SLV-copy.deleteDelay": {
-					"type": "number", 
+					"type": "number",
 					"default": 12,
-					"enum" : [3,6,9,12,18,24],
+					"enum": [
+						3,
+						6,
+						9,
+						12,
+						18,
+						24
+					],
 					"description": "Number of months of backup, files with an earlier date will be deleted from the backup directory (all users combined) when using the clean command"
 				},
 				"SLV-copy.numberOfSauvPerso": {
-					"type": "number", 
+					"type": "number",
 					"default": 5,
-					"enum" : [1,2,3,4,5],
+					"enum": [
+						1,
+						2,
+						3,
+						4,
+						5
+					],
 					"description": "Number of personal backups kept (from the most recent to the oldest) when using the clean function"
 				},
 				"SLV-copy.keyValueFolder": {
@@ -62,20 +76,26 @@
 				},
 				"SLV-copy.authorizedFileType": {
 					"type": "array",
-					"default": [".html",".css",".scss",".js",".json"],
+					"default": [
+						".html",
+						".css",
+						".scss",
+						".js",
+						".json"
+					],
 					"description": "Array of file extension definitions that will be saved. By default : ['html','css','scss','js']."
 				},
-				"SLV-copy.excludeFolder":{
+				"SLV-copy.excludeFolder": {
 					"type": "array",
-					"default":[],
+					"default": [],
 					"description": "Folder exclusion array so that the backup does not occur. Example : 'SLV-copy.excludeFolder:['c:\\Users\\dossierInitial1\\','c:\\Users\\dossierInitial2\\']'"
 				},
-				"SLV-copy.showWarningExtensionFile":{
+				"SLV-copy.showWarningExtensionFile": {
 					"type": "boolean",
 					"default": true,
 					"description": "If false you don't see warning message when extension file isn't in autorized file type"
 				},
-				"SLV-copy.showWarningMessageFolder":{
+				"SLV-copy.showWarningMessageFolder": {
 					"type": "boolean",
 					"default": true,
 					"description": "If false you don't see warning message when initial file directory isn't in keyValueFolder"
@@ -83,12 +103,12 @@
 			}
 		},
 		"menus": {
-            "explorer/context": [
-                {
-                    "command": "SLV-copy.manuelle",
-					"group":"5_cutcopypaste@1"
-                }
-            ]
+			"explorer/context": [
+				{
+					"command": "SLV-copy.manuelle",
+					"group": "5_cutcopypaste@1"
+				}
+			]
 		}
 	},
 	"scripts": {
@@ -115,5 +135,5 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/BlueStier/SLV-copy"
-	  }
+	}
 }
