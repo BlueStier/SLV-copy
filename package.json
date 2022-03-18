@@ -2,7 +2,7 @@
 	"name": "slvcopy",
 	"displayName": "SLV-copy",
 	"description": "Génère un fichier de sauvegarde à l'ouverture dans l'éditeur de texte",
-	"version": "0.0.1",
+	"version": "1.0.1",
 	"publisher": "BlueStier",
 	"engines": {
 		"vscode": "^1.42.0"
