@@ -69,6 +69,16 @@
 					"type": "array",
 					"default":[],
 					"description": "Folder exclusion array so that the backup does not occur. Example : 'SLV-copy.excludeFolder:['c:\\Users\\dossierInitial1\\','c:\\Users\\dossierInitial2\\']'"
+				},
+				"SLV-copy.showWarningExtensionFile":{
+					"type": "boolean",
+					"default": true,
+					"description": "If false you don't see warning message when extension file isn't in autorized file type"
+				},
+				"SLV-copy.showWarningMessageFolder":{
+					"type": "boolean",
+					"default": true,
+					"description": "If false you don't see warning message when initial file directory isn't in keyValueFolder"
 				}
 			}
 		},
@@ -101,5 +111,9 @@
 		"mocha": "^9.1.3",
 		"typescript": "^4.5.4",
 		"@vscode/test-electron": "^2.0.3"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/BlueStier/SLV-copy"
+	  }
 }

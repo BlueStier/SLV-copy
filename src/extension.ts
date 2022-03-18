@@ -14,6 +14,8 @@ const authorizedFileType: Array < string > = CONF.get("authorizedFileType") !;
 let filePathVsCode = process.env.APPDATA?.charAt(0).toLowerCase()+process.env.APPDATA?.slice(1) !;
 const vscodeSet = filePathVsCode + '\\Code\\User\\settings.json';
 const numberOfSauvPerso: number = CONF.get("numberOfSauvPerso") !;
+const showWarningMessageFolder : boolean = CONF.get("showWarningMessageFolder") !;
+const showWarningExtensionFile : boolean = CONF.get("showWarningExtensionFile") !;
 // preparing system variables
 const USER = homedir().split("\\")[2];
 //message constant
@@ -36,8 +38,10 @@ function run(event: any, bool:boolean,message:String="") {
 		if (authorizedFileType.includes(extensionFile)) {
 			//if the folders are not defined
 			if (!keyValueFolder || keyValueFolder.length === 0) {
-				//message pour accéder au fichier setting.json de vscode
+				if(showWarningMessageFolder){
+				//message for VScode settings.json
 				MESS.param(true);
+				}
 			} else {
 				let isExiste: Boolean = false;
 				//if folders are set loop on key to find out if folder is in config
@@ -61,12 +65,17 @@ function run(event: any, bool:boolean,message:String="") {
 				}
 				if (isExiste === false) {
 					//The folder is not in the config
-					MESS.param(true);
+					if(showWarningMessageFolder){
+						//message for VScode settings.json
+						MESS.param(true);
+						}
 				}
 			}
 		}else{
 			//The file extension is not in the config
+			if(showWarningExtensionFile){
 			MESS.param(false);
+			}
 		}
 	}
 }

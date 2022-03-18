@@ -290,7 +290,14 @@ export class File {
                 });
             });
         }catch{
-            
+            //no SLVcopy-lock.json delete all munaul save
+            savePerso.forEach((file)=>{
+                try{
+                    fs.unlinkSync(file);
+                    nbFilePerso++;
+                }catch(err){               
+                }
+            });
         }
         return nbFilePerso;
     }
