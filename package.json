@@ -24,7 +24,7 @@
 	"contributes": {
 		"commands": [{
 			"command": "SLV-copy.copy",
-			"title": "SLV-copy : manual backup"
+			"title": "SLV-copy : auto backup"
 		},
 		{
 			"command": "SLV-copy.manuelle",
