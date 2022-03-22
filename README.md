@@ -43,9 +43,9 @@ Number of personal backups kept (from the most recent to the oldest) when using 
 
 ` "SLV-copy.excludeFolder": []` : Folder exclusion array so that the backup does not occur
 
-` "SLV-copy.showWarningExtensionFile": true` : If false you don't see warning message when extension file isn't in autorized file type
+` "SLV-copy.showWarningExtensionFile": true` : Checked if you want to see warning message when extension file isn't in autorized file type otherwise unchecked
 
-` "SLV-copy.showWarningMessageFolder": true` : If false you don't see warning message when initial file directory isn't in keyValueFolder
+` "SLV-copy.showWarningMessageFolder": true` : Checked if you want to see warning message when initial file directory isn't in keyValueFolder otherwise unchecked
 
 # Settings.json exemple
 
