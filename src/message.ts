@@ -112,7 +112,14 @@ export class Message {
         }
         window.showInformationMessage(str);
     }  
-    /*END informationDelete*/ 
+    /*END informationDelete*/
+    /**statusBarClean
+     *TODO: insert statusbar when clean-up is launch
+     *@async
+     *@public
+     *@param {boolean} bool
+     *@retrun {void}
+     */ 
     public statusBarClean(bool:boolean = true){
         if(bool){
             this.statusBar.show();
@@ -121,5 +128,6 @@ export class Message {
         }else{
             this.statusBar.hide();
         }
-    }     
+    }  
+    /*END statusBarClean*/   
 }

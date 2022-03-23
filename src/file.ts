@@ -186,7 +186,6 @@ export class File {
             });
         }else{
             let mem:Message = new Message;
-            mem.statusBarClean();
             const deleteDelay: number = conf.get("deleteDelay") !;
             const numberOfSauvPerso: number = conf.get("numberOfSauvPerso") !;
             let files:string[] =  this.recursiveDirectory(value);
@@ -224,11 +223,7 @@ export class File {
                 }catch(err){               
                 }
             });
-            mem.informationDelete(nbFile,nbFolder,nbFilePerso,value);
-            setTimeout(()=>{
-                mem.statusBarClean(false);
-            },2000);
-            
+            mem.informationDelete(nbFile,nbFolder,nbFilePerso,value);            
         }
     }
      /*END clean()*/

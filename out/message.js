@@ -120,6 +120,13 @@ class Message {
         vscode_1.window.showInformationMessage(str);
     }
     /*END informationDelete*/
+    /**statusBarClean
+     *TODO: insert statusbar when clean-up is launch
+     *@async
+     *@public
+     *@param {boolean} bool
+     *@retrun {void}
+     */
     statusBarClean(bool = true) {
         if (bool) {
             this.statusBar.show();

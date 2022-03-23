@@ -11,7 +11,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*",
+		"onStartupFinished",
 		"onCommand:SLV-copy.copy",
 		"onCommand:SLV-copy.manuelle"
 	],

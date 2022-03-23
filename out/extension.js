@@ -122,7 +122,11 @@ function activate(context) {
     //commands
     SUB.push(vscode.commands.registerCommand('SLV-copy.cleanUp', async () => MESS.showQuickPick(keyValueFolder).then((value) => {
         if (value !== undefined) {
+            MESS.statusBarClean();
             FI.clean(vscode.workspace.getConfiguration("SLV-copy"), value.label);
+            setTimeout(() => {
+                MESS.statusBarClean(false);
+            }, 2000);
         }
     })));
 }

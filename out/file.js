@@ -194,7 +194,6 @@ class File {
         }
         else {
             let mem = new message_1.Message;
-            mem.statusBarClean();
             const deleteDelay = conf.get("deleteDelay");
             const numberOfSauvPerso = conf.get("numberOfSauvPerso");
             let files = this.recursiveDirectory(value);
@@ -235,9 +234,6 @@ class File {
                 }
             });
             mem.informationDelete(nbFile, nbFolder, nbFilePerso, value);
-            setTimeout(() => {
-                mem.statusBarClean(false);
-            }, 2000);
         }
     }
     /*END clean()*/
