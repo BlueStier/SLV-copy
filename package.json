@@ -22,20 +22,19 @@
 	},
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "SLV-copy.copy",
-				"title": "SLV-copy : manual backup"
-			},
-			{
-				"command": "SLV-copy.manuelle",
-				"title": "SLV-copy : manual backup"
-			},
-			{
-				"command": "SLV-copy.cleanUp",
-				"title": "SLV-copy : directory cleaning"
-			}
-		],
+		"commands": [{
+			"command": "SLV-copy.copy",
+			"title": "SLV-copy : auto backup"
+		},
+		{
+			"command": "SLV-copy.manuelle",
+			"title": "SLV-copy : manual backup"
+		},
+		{
+			"command": "SLV-copy.cleanUp",
+			"title": "SLV-copy : directory cleaning"
+		}
+	],
 		"configuration": {
 			"title": "SLV-copy",
 			"properties": {
@@ -93,12 +92,12 @@
 				"SLV-copy.showWarningExtensionFile": {
 					"type": "boolean",
 					"default": true,
-					"description": "If false you don't see warning message when extension file isn't in autorized file type"
+					"description": "Checked if you want to see warning message when extension file isn't in autorized file type otherwise unchecked"
 				},
 				"SLV-copy.showWarningMessageFolder": {
 					"type": "boolean",
 					"default": true,
-					"description": "If false you don't see warning message when initial file directory isn't in keyValueFolder"
+					"description": "Checked if you want to see warning message when initial file directory isn't in keyValueFolder otherwise unchecked"
 				}
 			}
 		},
@@ -135,5 +134,5 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/BlueStier/SLV-copy"
-	}
+	  }
 }
