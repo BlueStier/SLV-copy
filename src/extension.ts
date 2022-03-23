@@ -98,7 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
 	SUB.push(
 		vscode.commands.registerCommand('SLV-copy.copy',()=>
 		//recovery of the file opened in the text editor
-		run(vscode.workspace.textDocuments[0],true)
+			run(vscode.window.activeTextEditor!.document,true)
 		)		
 	);
 	SUB.push(
@@ -106,7 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
 			{
 				let fileName:string = "";
 				if(typeof uri === "undefined"){
-					fileName = vscode.workspace.textDocuments[0].fileName;
+					fileName = vscode.window.activeTextEditor!.document.fileName;
 				}else{
 					fileName = uri.fsPath;
 				}

@@ -1,9 +1,10 @@
 /* Class Message
 TODO: centralize message display in vscode
 */
-import {window,commands, Uri,QuickPickItem} from 'vscode';
+import {window,commands,Uri,QuickPickItem,StatusBarAlignment,StatusBarItem} from 'vscode';
 import {File} from './file';
 export class Message {
+    private statusBar: StatusBarItem = window.createStatusBarItem(StatusBarAlignment.Left,5);
     /*constructor*/
     public constructor() {
 	}
@@ -111,5 +112,14 @@ export class Message {
         }
         window.showInformationMessage(str);
     }  
-    /*END informationDelete*/      
+    /*END informationDelete*/ 
+    public statusBarClean(bool:boolean = true){
+        if(bool){
+            this.statusBar.show();
+            this.statusBar.text = `$(sync~spin) SLV-copy clean run...`;
+            this.statusBar.tooltip = 'Clean up backup folder is running...';
+        }else{
+            this.statusBar.hide();
+        }
+    }     
 }

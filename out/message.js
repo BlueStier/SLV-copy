@@ -9,6 +9,7 @@ const file_1 = require("./file");
 class Message {
     /*constructor*/
     constructor() {
+        this.statusBar = vscode_1.window.createStatusBarItem(vscode_1.StatusBarAlignment.Left, 5);
     }
     /*END constructor*/
     /**information()
@@ -117,6 +118,17 @@ class Message {
             str = `${nbFile} automatic backup file(s), ${nbFilePerso} manual backup files and ${nbFolder} deleted folders on ${value}`;
         }
         vscode_1.window.showInformationMessage(str);
+    }
+    /*END informationDelete*/
+    statusBarClean(bool = true) {
+        if (bool) {
+            this.statusBar.show();
+            this.statusBar.text = `$(sync~spin) SLV-copy clean run...`;
+            this.statusBar.tooltip = 'Clean up backup folder is running...';
+        }
+        else {
+            this.statusBar.hide();
+        }
     }
 }
 exports.Message = Message;
