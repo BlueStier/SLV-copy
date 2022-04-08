@@ -132,9 +132,9 @@ export class File {
         let check:boolean = true;        
         Object.entries(slvJson).forEach(([key,value]) => { 
             Object.entries(slvJson[key]).forEach(([key1,value1]) => {
-                if(value1 === this.pathFile){
+                if(value1 === nameFile){
                     if(slvJson[key][1].length > num){
-                        let rest:number = slvJson[key][1].length - num;
+                        let rest:number = slvJson[key][1].length - num + 1;
                         slvJson[key][1] = slvJson[key][1].slice(rest);
                     }
                     slvJson[key][1].push(concatName);
@@ -281,7 +281,7 @@ export class File {
                             slvJson[key][1] = slvJson[key][1].slice(rest);
                         }
                         if(value1 === nameInit){
-                            if(!value1.includes(fileRestruc)){
+                            if(!slvJson[key][1].includes(fileRestruc)){
                                 fs.unlinkSync(file);
                                 nbFilePerso++;
                             }
