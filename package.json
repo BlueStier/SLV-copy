@@ -2,7 +2,7 @@
 	"name": "slvcopy",
 	"displayName": "SLV-copy",
 	"description": "Generates a backup file when opened in the text editor",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"publisher": "BlueStier",
 	"engines": {
 		"vscode": "^1.42.0"
@@ -22,8 +22,7 @@
 	},
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [
-			{
+		"commands": [{
 				"command": "SLV-copy.copy",
 				"title": "SLV-copy : auto backup"
 			},
@@ -103,12 +102,10 @@
 			}
 		},
 		"menus": {
-			"explorer/context": [
-				{
-					"command": "SLV-copy.manuelle",
-					"group": "5_cutcopypaste@1"
-				}
-			]
+			"explorer/context": [{
+				"command": "SLV-copy.manuelle",
+				"group": "5_cutcopypaste@1"
+			}]
 		}
 	},
 	"scripts": {

@@ -7,6 +7,7 @@ TODO: centralizes copy and folder creation actions if necessary
 const fs = require("fs");
 const path = require("path");
 const message_1 = require("./message");
+const clean_1 = require("./clean");
 class File {
     /**constructor
      *@public
@@ -28,14 +29,14 @@ class File {
     }
     /*END constructor*/
     /**set_all
-    *TODO: setter of all parameters of an object of class File
-    *@sync
-    *@public
-    *@param {string} folder
-    *@param {Boolean} daly
-    *@param {string} pathFile
-    *@retrun {void}
-    */
+     *TODO: setter of all parameters of an object of class File
+     *@sync
+     *@public
+     *@param {string} folder
+     *@param {Boolean} daly
+     *@param {string} pathFile
+     *@retrun {void}
+     */
     setAll(folder, daly, pathFile, user) {
         this.folder = folder;
         this.daly = daly;
@@ -125,12 +126,12 @@ class File {
     }
     /*END save()*/
     /**SlvCopyUpdate()
-    *TODO: insert file name into backup
-    *@sync
-    *@public
-    *@param {string}name
-    *@retrun {void}
-    */
+     *TODO: insert file name into backup
+     *@sync
+     *@public
+     *@param {string}name
+     *@retrun {void}
+     */
     slvCopyUpdate(concatName, num) {
         let nameFile = this.pathFile.split("\\")[this.pathFile.split("\\").length - 1];
         try {
@@ -165,13 +166,13 @@ class File {
     }
     /*END SlvCopyUpdate()*/
     /**savePerso()
-    *TODO: generates the copy taking into account the message
-    *@sync
-    *@public
-    *@param {Sring}message
-    *@param {number} num
-    *@retrun {void}
-    */
+     *TODO: generates the copy taking into account the message
+     *@sync
+     *@public
+     *@param {Sring}message
+     *@param {number} num
+     *@retrun {void}
+     */
     savePerso(message, num) {
         message = message.replace(/ /g, "_");
         message = `_SAUV_PERSO_SLV-Copy_${message}`;
@@ -186,66 +187,65 @@ class File {
      *@retrun {void}
      */
     clean(conf, value) {
-        if (value === "All") {
-            const keyValueFolder = conf.get("keyValueFolder");
-            keyValueFolder.forEach((value) => {
-                this.clean(conf, value[1].toString());
-            });
-        }
-        else {
-            let mem = new message_1.Message;
-            const deleteDelay = conf.get("deleteDelay");
-            const numberOfSauvPerso = conf.get("numberOfSauvPerso");
-            let files = this.recursiveDirectory(value);
-            let folders = this.recursiveDirectory(value, false);
-            let savePerso = [];
-            let save = [];
-            files.forEach((file) => {
-                if (!file.includes("SLVcopy-lock.json")) {
-                    if (file.includes("_SAUV_PERSO_SLV-Copy_")) {
-                        savePerso.push(file);
-                    }
-                    else {
-                        save.push(file);
-                    }
-                }
-            });
-            //delete autosave files
-            let time = (24 * 60 * 60 * 1000 * 30) * deleteDelay;
-            let limit = Date.now() - time;
-            let nbFile = 0;
-            let nbFolder = 0;
-            save.forEach((file) => {
-                const { birthtimeMs } = fs.statSync(file);
-                if (birthtimeMs < limit) {
-                    fs.unlinkSync(file);
-                    nbFile++;
-                }
-            });
-            //manual save file deletion
-            let nbFilePerso = this.deleteSavePerso(savePerso, numberOfSauvPerso);
-            //remove directory if empty
-            folders.forEach((folder) => {
-                try {
-                    fs.rmdirSync(folder);
-                    nbFolder++;
-                }
-                catch (err) {
-                }
-            });
-            mem.informationDelete(nbFile, nbFolder, nbFilePerso, value);
-        }
+        const clean = new clean_1.CleanUp(value, true);
+        clean.launch();
+        // if(value === "All"){
+        //     const keyValueFolder: Array < string > = conf.get("keyValueFolder") !;
+        //     keyValueFolder.forEach((value)=>{
+        //         this.clean(conf,value[1].toString());          
+        //     });
+        // }else{
+        //     let mem:Message = new Message;
+        //     const deleteDelay: number = conf.get("deleteDelay") !;
+        //     const numberOfSauvPerso: number = conf.get("numberOfSauvPerso") !;
+        //     let files:string[] =  this.recursiveDirectory(value);
+        //     let folders:string[] = this.recursiveDirectory(value,false);
+        //     let savePerso:string[] = [];
+        //     let save:string[] = [];
+        //     files.forEach((file) => {
+        //         if(!file.includes("SLVcopy-lock.json")){
+        //             if(file.includes("_SAUV_PERSO_SLV-Copy_")){
+        //                 savePerso.push(file);
+        //             }else{
+        //                 save.push(file);
+        //             }
+        //         }
+        //     });
+        //     //delete autosave files
+        //     let time = (24*60*60*1000*30)*deleteDelay;
+        //     let limit = Date.now()- time;
+        //     let nbFile:number = 0; 
+        //     let nbFolder:number = 0;
+        //     save.forEach((file)=>{
+        //         const { birthtimeMs } = fs.statSync(file);
+        //             if(birthtimeMs < limit){
+        //             fs.unlinkSync(file);
+        //             nbFile++;
+        //         }
+        //     });
+        //     //manual save file deletion
+        //     let nbFilePerso:number = this.deleteSavePerso(savePerso,numberOfSauvPerso);
+        //     //remove directory if empty
+        //     folders.forEach((folder)=>{
+        //         try{
+        //         fs.rmdirSync(folder);
+        //         nbFolder++;
+        //         }catch(err){               
+        //         }
+        //     });
+        //     mem.informationDelete(nbFile,nbFolder,nbFilePerso,value);            
+        // }
     }
     /*END clean()*/
     /**recursiveDirectory()
-    *TODO: lists all files and subfolders in the specified path and returns an array
-    *@sync
-    *@private
-    *@param {string} dirPath;
-    *@param {Boolean} useDayFolder;
-    *@param {Array<string>} arrayOfFiles;
-    *@retrun {Array<string>} arrayOfFiles;
-    */
+     *TODO: lists all files and subfolders in the specified path and returns an array
+     *@sync
+     *@private
+     *@param {string} dirPath;
+     *@param {Boolean} useDayFolder;
+     *@param {Array<string>} arrayOfFiles;
+     *@retrun {Array<string>} arrayOfFiles;
+     */
     recursiveDirectory(dirPath, useDayFolder = true, arrayOfFiles = []) {
         let files = fs.readdirSync(dirPath);
         files.forEach((file) => {
@@ -303,14 +303,13 @@ class File {
             });
         }
         catch {
-            //no SLVcopy-lock.json delete all munaul save
+            //no SLVcopy-lock.json delete all manual save
             savePerso.forEach((file) => {
                 try {
                     fs.unlinkSync(file);
                     nbFilePerso++;
                 }
-                catch (err) {
-                }
+                catch (err) { }
             });
         }
         return nbFilePerso;

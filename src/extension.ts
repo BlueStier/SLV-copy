@@ -4,7 +4,6 @@ import * as path from 'path';
 import {homedir} from 'os';
 import {Message} from './message';
 import {File} from './file';
-import { fileURLToPath } from 'url';
 //Preparation of configuration constants
 const CONF:vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("SLV-copy");
 const useDayFolder: Boolean = CONF.get("useDayFolder") !;
