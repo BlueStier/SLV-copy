@@ -3,9 +3,13 @@ TODO: centralizes copy and folder creation actions if necessary
 */
 import * as fs from 'fs';
 import * as path from 'path';
-import {Message} from './message';
+import {
+    Message
+} from './message';
 import * as vscode from 'vscode';
-import {CleanUp} from './clean';
+import {
+    CleanUp
+} from './clean';
 export class File {
     private folder: string = "";
     private daly: Boolean = false;
@@ -84,7 +88,7 @@ export class File {
         let pathDirectory: string = this.folder + this.user;
         if (this.daly) {
             let date = new Date();
-            pathDirectory += "/" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+            pathDirectory += `\\${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}`;
         }
         //Check if the backup folder does not exist, create it
         if (!fs.existsSync(pathDirectory)) {
@@ -103,10 +107,10 @@ export class File {
             //autosave or manual save but the user did not leave a message
             let date2 = new Date();
             //concatenation of path to repo and name with timstamp
-            concatName = pathDirectory + "/" + splitName + "-" + date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + "-" + date2.getHours() + "h" + date2.getMinutes() + "m" + date2.getSeconds() + "s" + ext;
+            concatName = `${pathDirectory}\\${splitName}-${date2.getFullYear()}-${(date2.getMonth() + 1)}-${date2.getDate()}-${date2.getHours()}h${date2.getMinutes()}m${date2.getSeconds()}s${ext}`;
         } else {
             //personal message
-            concatName = pathDirectory + "/" + splitName + message + ext;
+            concatName = `${pathDirectory}\\${splitName}${message}${ext}`;
             //saves to SLVcopy-lock.json
             this.slvCopyUpdate(concatName, num);
         }
@@ -123,7 +127,8 @@ export class File {
      *TODO: insert file name into backup
      *@sync
      *@public
-     *@param {string}name 
+     *@param {string}concatName 
+     *@param {number}num
      *@retrun {void}
      */
     public slvCopyUpdate(concatName: string, num: number) {
@@ -131,29 +136,33 @@ export class File {
         try {
             let slvJson = JSON.parse(fs.readFileSync(this.folder + "/SLVcopy-lock.json", 'utf-8'));
             let check: boolean = true;
-            Object.entries(slvJson).forEach(([key, value]) => {
-                Object.entries(slvJson[key]).forEach(([key1, value1]) => {
-                    if (value1 === nameFile) {
-                        if (slvJson[key][1].length > num) {
-                            let rest: number = slvJson[key][1].length - num + 1;
-                            slvJson[key][1] = slvJson[key][1].slice(rest);
-                        }
-                        slvJson[key][1].push(concatName);
-                        check = false;
+            slvJson.forEach((item:any,key:number) => {
+                let {
+                    name,
+                    cName
+                } = item;
+                if (name === nameFile) {
+                    if (cName.length >= num) {
+                        let rest: number = cName.length - num + 1;
+                        slvJson[key].cName = cName.slice(rest);
                     }
-                });
+                    slvJson[key].cName.push(concatName);
+                    check = false;
+                }
             });
             if (check) {
-                let insert = [
-                    nameFile, [concatName]
-                ];
+                let insert = {
+                    name: nameFile,
+                    cName: [concatName]
+                };
                 slvJson.push(insert);
             }
             fs.writeFileSync(this.folder + "/SLVcopy-lock.json", JSON.stringify(slvJson));
         } catch {
-            let insert = [
-                [nameFile, [concatName]]
-            ];
+            let insert = [{
+                name: nameFile,
+                cName: [concatName]
+            }];
             fs.writeFileSync(this.folder + "/SLVcopy-lock.json", JSON.stringify(insert));
         }
     }
@@ -180,128 +189,20 @@ export class File {
      *@retrun {void}
      */
     public clean(conf: vscode.WorkspaceConfiguration, value: string) {
-        const clean : CleanUp = new CleanUp(value,true);
-		clean.launch();
-        // if(value === "All"){
-        //     const keyValueFolder: Array < string > = conf.get("keyValueFolder") !;
-        //     keyValueFolder.forEach((value)=>{
-        //         this.clean(conf,value[1].toString());          
-        //     });
-        // }else{
-        //     let mem:Message = new Message;
-        //     const deleteDelay: number = conf.get("deleteDelay") !;
-        //     const numberOfSauvPerso: number = conf.get("numberOfSauvPerso") !;
-        //     let files:string[] =  this.recursiveDirectory(value);
-        //     let folders:string[] = this.recursiveDirectory(value,false);
-        //     let savePerso:string[] = [];
-        //     let save:string[] = [];
-        //     files.forEach((file) => {
-        //         if(!file.includes("SLVcopy-lock.json")){
-        //             if(file.includes("_SAUV_PERSO_SLV-Copy_")){
-        //                 savePerso.push(file);
-        //             }else{
-        //                 save.push(file);
-        //             }
-        //         }
-        //     });
-        //     //delete autosave files
-        //     let time = (24*60*60*1000*30)*deleteDelay;
-        //     let limit = Date.now()- time;
-        //     let nbFile:number = 0; 
-        //     let nbFolder:number = 0;
-        //     save.forEach((file)=>{
-        //         const { birthtimeMs } = fs.statSync(file);
-        //             if(birthtimeMs < limit){
-        //             fs.unlinkSync(file);
-        //             nbFile++;
-        //         }
-        //     });
-        //     //manual save file deletion
-        //     let nbFilePerso:number = this.deleteSavePerso(savePerso,numberOfSauvPerso);
-        //     //remove directory if empty
-        //     folders.forEach((folder)=>{
-        //         try{
-        //         fs.rmdirSync(folder);
-        //         nbFolder++;
-        //         }catch(err){               
-        //         }
-        //     });
-        //     mem.informationDelete(nbFile,nbFolder,nbFilePerso,value);            
-        // }
+        const clean: CleanUp = new CleanUp();
+        let arrayToJsonFile: Array < string > = [];
+        if (value === "All") {
+            const keyValueFolder: Array < string > = conf.get("keyValueFolder") !;
+            keyValueFolder.forEach(value => arrayToJsonFile.push(value[1]));
+        } else {
+            arrayToJsonFile.push(value);
+        }
+        const inputInFile: object = {
+            repos: arrayToJsonFile,
+            deleteDelay: conf.get("deleteDelay"),
+            numberOfSauvPerso: conf.get("numberOfSauvPerso")
+        };
+        clean.launch(inputInFile);
     }
     /*END clean()*/
-    /**recursiveDirectory()
-     *TODO: lists all files and subfolders in the specified path and returns an array
-     *@sync
-     *@private
-     *@param {string} dirPath;
-     *@param {Boolean} useDayFolder;
-     *@param {Array<string>} arrayOfFiles;
-     *@retrun {Array<string>} arrayOfFiles;
-     */
-    private recursiveDirectory(dirPath: string, useDayFolder: Boolean = true, arrayOfFiles: Array < string > = []) {
-        let files: string[] = fs.readdirSync(dirPath);
-        files.forEach((file) => {
-            if (useDayFolder) {
-                if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-                    arrayOfFiles = this.recursiveDirectory(dirPath + "/" + file, true, arrayOfFiles);
-                } else {
-                    arrayOfFiles.push(path.join(dirPath, "/", file));
-                }
-            } else {
-                if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-                    arrayOfFiles.push(path.join(dirPath, "/", file));
-                    arrayOfFiles = this.recursiveDirectory(dirPath + "/" + file, false, arrayOfFiles);
-                }
-            }
-        });
-        return arrayOfFiles;
-    }
-    /*END recursiveDirectory()*/
-    /**deleteSavePerso
-     *TODO: remove manual saves
-     *@sync
-     *@private
-     *@param {Array} savePerso;
-     *@param {number} num;
-     *@retrun {number} nbFile;
-     */
-    private deleteSavePerso(savePerso: string[], num: number) {
-        let nbFilePerso = 0;
-        try {
-            let slvJson = JSON.parse(fs.readFileSync(this.folder + "/SLVcopy-lock.json", 'utf-8'));
-            savePerso.forEach((file) => {
-                let fileRestruc = file.replace(/\\/g, "/");
-                let splitPerso: string[] = file.split("\\");
-                let namePerso: string = splitPerso[splitPerso.length - 1];
-                let splitInit: string[] = file.split("_SAUV_PERSO_SLV-Copy_");
-                let nameInit: string = splitInit[0].split("\\")[splitInit[0].split("\\").length - 1] + path.extname(namePerso);
-                Object.entries(slvJson).forEach(([key, value]) => {
-                    Object.entries(slvJson[key]).forEach(([key1, value1]) => {
-                        // verification of the size of the backup if there has been a change in the number of backups to keep                       
-                        if (slvJson[key][1].length > num) {
-                            let rest: number = slvJson[key][1].length - num;
-                            slvJson[key][1] = slvJson[key][1].slice(rest);
-                        }
-                        if (value1 === nameInit) {
-                            if (!slvJson[key][1].includes(fileRestruc)) {
-                                fs.unlinkSync(file);
-                                nbFilePerso++;
-                            }
-                        }
-                    });
-                });
-            });
-        } catch {
-            //no SLVcopy-lock.json delete all manual save
-            savePerso.forEach((file) => {
-                try {
-                    fs.unlinkSync(file);
-                    nbFilePerso++;
-                } catch (err) {}
-            });
-        }
-        return nbFilePerso;
-    }
-    /*END deleteSavePerso*/
 }
