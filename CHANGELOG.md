@@ -1,9 +1,26 @@
 # Change Log
 
-All notable changes to the "helloWorld" extension will be documented in this file.
+# 1.0.1
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+First release
 
-## [Unreleased]
+# 1.2.0
 
-- Initial release
+Change auto back-up and implemente manual back-up
+
+# 1.3.0
+
+Correctif issues "Extension causes high cpu load"
+
+# 1.4.0
+
+Implement clean-up
+
+# 1.5.0
+
+Minor change
+
+# 2.0.0
+
+New version : change clean-up fonction : launch node process in terminal (cleanUpRepository.js)
+
