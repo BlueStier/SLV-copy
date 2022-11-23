@@ -10,13 +10,6 @@ trigger:
   tags:
     include:
     - v*
-on:
-  push:
-    branches:
-    - main
-  release:
-    types:
-    - created
 jobs:
   build:
     strategy:
