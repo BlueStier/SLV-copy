@@ -2,7 +2,7 @@
 	"name": "slvcopy",
 	"displayName": "SLV-copy",
 	"description": "Generates a backup file when opened in the text editor",
-	"version": "2.0",
+	"version": "2.0.0",
 	"publisher": "BlueStier",
 	"engines": {
 		"vscode": "^1.42.0"
