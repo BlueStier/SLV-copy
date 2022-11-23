@@ -9,31 +9,19 @@ trigger:
     - main
   tags:
     include:
-    - v*
-jobs:
-  build:
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
-    - run: npm install
-    - run: xvfb-run -a npm test
-      if: runner.os == 'Linux'
-    - run: npm test
-      if: runner.os != 'Linux'
+    - refs/tags/v*
 
 pool:
   vmImage: $(imageName)
 
 steps:
-
+- bash: |
+    echo ">>> Publish"
+    yarn deploy
+  displayName: Publish
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Agent.OS'], 'Linux'))
+  env:
+    VSCE_PAT: $(VSCE_PAT)
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
