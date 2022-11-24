@@ -28,7 +28,7 @@ try {
  *@retrun {void};
  */
 /*END cleanUpDirectory()*/
-function cleanUpDirectory(dirPath, deleteDelay, numberOfSauvPerso) {
+async function cleanUpDirectory(dirPath, deleteDelay, numberOfSauvPerso) {
     console.log(`\x1b[33m Reading files in Repository ${dirPath} please wait...\x1b[0m`);
     const files = recursiveDirectory(dirPath, true, []);
     console.log(`\x1b[33m Reading folders in Repository ${dirPath} please wait...\x1b[0m`);
@@ -69,26 +69,7 @@ function cleanUpDirectory(dirPath, deleteDelay, numberOfSauvPerso) {
     if (nbFile == 0) {
         console.log(`\x1b[33m No files saved for more than ${deleteDelay} months to delete\x1b[0m`);
     } else {
-        const rl = READLINE.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
-        rl.question(`Do you confirm the deletion of ${nbFile} files ? (Y/n)`, function (answer) {
-            if (answer === 'Y') {
-                console.log(`\x1b[33m Delete is running, please wait...\x1b[0m`);
-                arrayFile.forEach((file) => {
-                    FS.unlinkSync(file);
-                    console.log(`${file} delete`);
-                })
-                rl.close();
-            } else {
-                console.log(`\x1b[33m Clean-up is stopped. NO DELETE\x1b[0m`);
-                rl.close();
-            }
-        })
-        rl.on('close', function () {
-            process.exit(0);
-        });
+        await askTooUser(`Do you confirm the deletion of ${nbFile} files ? (Y/n)`, "Y");
     }
     const deleteSavePersoRestruct = deleteSavePerso(savePerso, numberOfSauvPerso, dirPath);
     console.log(`List of ${deleteSavePersoRestruct.nbFilePerso} files manual back-up to delete : `);
@@ -100,22 +81,7 @@ function cleanUpDirectory(dirPath, deleteDelay, numberOfSauvPerso) {
             input: process.stdin,
             output: process.stdout
         });
-        rl.question(`Do you confirm the deletion of ${deleteSavePersoRestruct.nbFilePerso} files ? (Y/n)`, function (answer) {
-            if (answer === 'Y') {
-                console.log(`\x1b[33m Delete is running, please wait...\x1b[0m`);
-                deleteSavePersoRestruct.arrayToDelete.forEach((file) => {
-                    FS.unlinkSync(file);
-                    console.log(`${file} delete`);
-                })
-                rl.close();
-            } else {
-                console.log(`\x1b[33m Clean-up is stopped. NO DELETE\x1b[0m`);
-                rl.close();
-            }
-        })
-        rl.on('close', function () {
-            process.exit(0);
-        });
+        await askTooUser(`Do you confirm the deletion of ${deleteSavePersoRestruct.nbFilePerso} files ? (Y/n)`, "Y");
     }
     console.log(`\x1b[33m Delete empty directory \x1b[0m`);
     folders.forEach((folder) => {
@@ -212,3 +178,28 @@ function deleteSavePerso(savePerso, num, folder) {
     return returnInfo;
 }
 /*END deleteSavePerso*/
+function askTooUser(question, waitAnswer) {
+    const rl = READLINE.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    return new Promise((resolve, reject) => {
+        rl.question(question, function (answer) {
+            if (answer === waitAnswer) {
+                console.log(`\x1b[33m Delete is running, please wait...\x1b[0m`);
+                arrayFile.forEach((file) => {
+                    //FS.unlinkSync(file);
+                    console.log(`${file} delete`);
+                })
+                rl.close();
+            } else {
+                console.log(`\x1b[33m Clean-up is stopped. NO DELETE\x1b[0m`);
+                rl.close();
+            }
+        })
+        rl.on('close', function () {
+            process.exit(0);
+            resolve();
+        });
+    });
+}
