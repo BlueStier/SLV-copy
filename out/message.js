@@ -13,67 +13,81 @@ class Message {
     }
     /*END constructor*/
     /**information()
-   *TODO: Displays a message to the user based on the passed parameter
-   *@sync
-   *@public
-   *@param {String} str
-   *@param {Boolean} bool
-   *@retrun {void}
-   */
+     *TODO: Displays a message to the user based on the passed parameter
+     *@sync
+     *@public
+     *@param {String} str
+     *@param {Boolean} bool
+     *@retrun {void}
+     */
     information(str, bool = true) {
-        let answer = bool ? `The file ${str} was saved automatically` : `Your manual backup of the ${str} file has been made.`;
+        let answer = bool
+            ? `The file ${str} was saved automatically`
+            : `Your manual backup of the ${str} file has been made.`;
         vscode_1.window.showInformationMessage(answer);
     }
     /*END information()*/
     /**param()
-    *TODO: Displays a message to the user to access setting.json
-    *@async
-    *@public
-    *@param {Boolean} param
-    *@retrun {void}
-    */
+     *TODO: Displays a message to the user to access setting.json
+     *@async
+     *@public
+     *@param {Boolean} param
+     *@retrun {void}
+     */
     async param(param) {
         let mess = "";
         let bool = true;
         if (param) {
-            mess = "the file path is not present in the config folder. Save the folder in SLV-copy.keyValueFolder to set it or in SLV-copy.excludeFolder to exclude it";
+            mess =
+                "the file path is not present in the config folder. Save the folder in SLV-copy.keyValueFolder to set it or in SLV-copy.excludeFolder to exclude it";
         }
         else {
-            mess = "The file extension is not recognized. Save this extension in SLV-copy.authorizedFileType.";
+            mess =
+                "The file extension is not recognized. Save this extension in SLV-copy.authorizedFileType.";
             bool = false;
         }
         const answer = await vscode_1.window.showWarningMessage(mess, "configure in setting.json");
         if (answer === "configure in setting.json") {
             let file = new file_1.File();
             file.config(bool);
-            let uri = vscode_1.Uri.file(process.env.APPDATA + '\\Code\\User\\settings.json');
-            await vscode_1.commands.executeCommand('vscode.openFolder', uri);
+            let uri = vscode_1.Uri.file(process.env.APPDATA + "\\Code\\User\\settings.json");
+            await vscode_1.commands.executeCommand("vscode.openFolder", uri);
         }
     }
     /*END param()*/
     /**error()
-   *TODO: Affiche un message à l'utilisateur si la copie a échouée
-   *@sync
-   *@public
-   *@param {void}
-   *@retrun {void}
-   */
+     *TODO: Affiche un message à l'utilisateur si la copie a échouée
+     *@sync
+     *@public
+     *@param {void}
+     *@retrun {void}
+     */
     error() {
         vscode_1.window.showErrorMessage("Backup failed. The destination folder is not accessible");
     }
     /*END error()*/
+    /**error()
+     *TODO: Affiche un message à l'utilisateur si la copie a échouée
+     *@sync
+     *@public
+     *@param {String} server
+     *@retrun {void}
+     */
+    errorUNC(server) {
+        vscode_1.window.showErrorMessage(`Backup failed. The UNC host '${server}' acces is not allowed, please allow UNChost '${server}' in settings`);
+    }
+    /*END error()*/
     /**showInputBox()
-    *TODO: Open the dialog window and return a promise
-    *@sync
-    *@public
-    *@param {void}
-    *@retrun {Promesse} showInputBox
-    */
+     *TODO: Open the dialog window and return a promise
+     *@sync
+     *@public
+     *@param {void}
+     *@retrun {Promesse} showInputBox
+     */
     showInputBox() {
-        ;
         return vscode_1.window.showInputBox({
             prompt: "Type the title of your backup. Be careful, do not put punctuation",
-            placeHolder: 'Message for your manual backup'
+            placeHolder: "Message for your manual backup",
         });
     }
     /*END showInputBox*/
@@ -95,7 +109,9 @@ class Message {
         else {
             optionFolder.push("All");
         }
-        let options = optionFolder.map(res => { return { label: `${res}` }; });
+        let options = optionFolder.map((res) => {
+            return { label: `${res}` };
+        });
         return vscode_1.window.showQuickPick(options);
     }
     /*END showQuickPick*/
@@ -131,7 +147,7 @@ class Message {
         if (bool) {
             this.statusBar.show();
             this.statusBar.text = `$(sync~spin) SLV-copy clean run...`;
-            this.statusBar.tooltip = 'Clean up backup folder is running...';
+            this.statusBar.tooltip = "Clean up backup folder is running...";
         }
         else {
             this.statusBar.hide();

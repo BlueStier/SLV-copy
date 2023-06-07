@@ -53,8 +53,10 @@ class File {
      */
     config(param) {
         try {
-            let set = fs.readFileSync(process.env.APPDATA + '\\Code\\User\\settings.json', 'utf-8');
-            let str = param ? "SLV-copy.keyValueFolder" : "SLV-copy.authorizedFileType";
+            let set = fs.readFileSync(process.env.APPDATA + "\\Code\\User\\settings.json", "utf-8");
+            let str = param
+                ? "SLV-copy.keyValueFolder"
+                : "SLV-copy.authorizedFileType";
             let array = set.split(str);
             //parameter is not present in settings.json
             if (array.length < 2) {
@@ -64,10 +66,11 @@ class File {
                     str2 = '"SLV-copy.keyValueFolder": [],}';
                 }
                 else if (str === "SLV-copy.authorizedFileType") {
-                    str2 = '\n"SLV-copy.authorizedFileType": [".html",".css",".scss",".js",".json"],\n}';
+                    str2 =
+                        '\n"SLV-copy.authorizedFileType": [".html",".css",".scss",".js",".json"],\n}';
                 }
                 destruct[destruct.length - 1] = str2;
-                fs.writeFileSync(process.env.APPDATA + '\\Code\\User\\settings.json', destruct.toString());
+                fs.writeFileSync(process.env.APPDATA + "\\Code\\User\\settings.json", destruct.toString());
             }
         }
         catch (err) {
@@ -81,20 +84,28 @@ class File {
      *@public
      *@param {String} message
      *@param {number} num
-     *@retrun {void}
+     *@return {boolean} notError
      */
     save(message = "", num = 0) {
+        let notError = true;
         //we check if the daily sub-folder request is active
         let pathDirectory = this.folder + this.user;
         if (this.daly) {
             let date = new Date();
-            pathDirectory += `\\${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}`;
+            pathDirectory += `\\${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
         }
         //Check if the backup folder does not exist, create it
-        if (!fs.existsSync(pathDirectory)) {
-            fs.mkdirSync(pathDirectory, {
-                recursive: true
-            });
+        try {
+            if (!fs.existsSync(pathDirectory)) {
+                fs.mkdirSync(pathDirectory, {
+                    recursive: true,
+                });
+            }
+        }
+        catch (error) {
+            notError = false;
+            let mess = new message_1.Message();
+            mess.errorUNC(this.folder.split("\\")[2]);
         }
         //file name recovery
         let name = path.basename(this.pathFile);
@@ -107,22 +118,27 @@ class File {
             //autosave or manual save but the user did not leave a message
             let date2 = new Date();
             //concatenation of path to repo and name with timstamp
-            concatName = `${pathDirectory}\\${splitName}-${date2.getFullYear()}-${(date2.getMonth() + 1)}-${date2.getDate()}-${date2.getHours()}h${date2.getMinutes()}m${date2.getSeconds()}s${ext}`;
+            concatName = `${pathDirectory}\\${splitName}-${date2.getFullYear()}-${date2.getMonth() + 1}-${date2.getDate()}-${date2.getHours()}h${date2.getMinutes()}m${date2.getSeconds()}s${ext}`;
         }
         else {
-            //personal message
-            concatName = `${pathDirectory}\\${splitName}${message}${ext}`;
-            //saves to SLVcopy-lock.json
-            this.slvCopyUpdate(concatName, num);
+            if (notError) {
+                //personal message
+                concatName = `${pathDirectory}\\${splitName}${message}${ext}`;
+                //saves to SLVcopy-lock.json
+                this.slvCopyUpdate(concatName, num);
+            }
         }
         try {
             fs.copyFileSync(this.pathFile, concatName, fs.constants.COPYFILE_FICLONE);
         }
         catch {
             //reception folder not available
-            let mess = new message_1.Message();
-            mess.error();
+            if (notError) {
+                let mess = new message_1.Message();
+                mess.error();
+            }
         }
+        return notError;
     }
     /*END save()*/
     /**SlvCopyUpdate()
@@ -136,7 +152,7 @@ class File {
     slvCopyUpdate(concatName, num) {
         let nameFile = this.pathFile.split("\\")[this.pathFile.split("\\").length - 1];
         try {
-            let slvJson = JSON.parse(fs.readFileSync(this.folder + "/SLVcopy-lock.json", 'utf-8'));
+            let slvJson = JSON.parse(fs.readFileSync(this.folder + "/SLVcopy-lock.json", "utf-8"));
             let check = true;
             slvJson.forEach((item, key) => {
                 let { name, cName } = item;
@@ -152,17 +168,19 @@ class File {
             if (check) {
                 let insert = {
                     name: nameFile,
-                    cName: [concatName]
+                    cName: [concatName],
                 };
                 slvJson.push(insert);
             }
             fs.writeFileSync(this.folder + "/SLVcopy-lock.json", JSON.stringify(slvJson));
         }
         catch {
-            let insert = [{
+            let insert = [
+                {
                     name: nameFile,
-                    cName: [concatName]
-                }];
+                    cName: [concatName],
+                },
+            ];
             fs.writeFileSync(this.folder + "/SLVcopy-lock.json", JSON.stringify(insert));
         }
     }
@@ -173,12 +191,13 @@ class File {
      *@public
      *@param {Sring}message
      *@param {number} num
-     *@retrun {void}
+     *@return {boolean} notError
      */
     savePerso(message, num) {
         message = message.replace(/ /g, "_");
         message = `_SAUV_PERSO_SLV-Copy_${message}`;
-        this.save(message, num);
+        let notError = this.save(message, num);
+        return notError;
     }
     /*END savePerso()*/
     /**clean()
@@ -193,7 +212,7 @@ class File {
         let arrayToJsonFile = [];
         if (value === "All") {
             const keyValueFolder = conf.get("keyValueFolder");
-            keyValueFolder.forEach(value => arrayToJsonFile.push(value[1]));
+            keyValueFolder.forEach((value) => arrayToJsonFile.push(value[1]));
         }
         else {
             arrayToJsonFile.push(value);
@@ -201,7 +220,7 @@ class File {
         const inputInFile = {
             repos: arrayToJsonFile,
             deleteDelay: conf.get("deleteDelay"),
-            numberOfSauvPerso: conf.get("numberOfSauvPerso")
+            numberOfSauvPerso: conf.get("numberOfSauvPerso"),
         };
         clean.launch(inputInFile);
     }

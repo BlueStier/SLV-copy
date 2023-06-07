@@ -9,11 +9,22 @@ class CleanUp {
             FS.writeFileSync(`${__dirname}/clean.json`, JSON.stringify(inputInFile));
             const destrucPathClean = __dirname.split("\\");
             let commandeLaunchJs = `echo Switch too SLV-copy extension directory & cd `;
-            let strLaunch = destrucPathClean.reduce((arr, value) => arr += `${value}/`, commandeLaunchJs);
+            let strLaunch = destrucPathClean.reduce((arr, value) => (arr += `${value}/`), commandeLaunchJs);
             const terminal = vscode.window.createTerminal("slv-copy");
-            terminal.show();
+            console.log(vscode.window.terminals[0]);
             terminal.sendText(strLaunch, true);
-            terminal.sendText('node cleanUpRepository.js', true);
+            terminal.sendText("node cleanUpRepository.js", true);
+            // const intval = setInterval(() => {
+            //   const state = terminal.state.isInteractedWith;
+            //   console.log(state);
+            //   terminal.show();
+            //   if (state === true) {
+            //     console.log("ouaip");
+            //     terminal.sendText(strLaunch, true);
+            //     terminal.sendText("node cleanUpRepository.js", true);
+            //     clearInterval(intval);
+            //   }
+            // }, 1000);
         }
         catch (error) {
             console.log(error);

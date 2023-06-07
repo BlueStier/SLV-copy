@@ -14,7 +14,7 @@ const keyValueFolder = CONF.get("keyValueFolder");
 const exclude = CONF.get("excludeFolder");
 const authorizedFileType = CONF.get("authorizedFileType");
 let filePathVsCode = process.env.APPDATA?.charAt(0).toLowerCase() + process.env.APPDATA?.slice(1);
-const vscodeSet = filePathVsCode + '\\Code\\User\\settings.json';
+const vscodeSet = filePathVsCode + "\\Code\\User\\settings.json";
 const numberOfSauvPerso = CONF.get("numberOfSauvPerso");
 const showWarningMessageFolder = CONF.get("showWarningMessageFolder");
 const showWarningExtensionFile = CONF.get("showWarningExtensionFile");
@@ -57,12 +57,16 @@ function run(event, bool, message = "") {
                             FI.setAll(keyValueFolder[item][1], useDayFolder, name, USER);
                             if (bool) {
                                 //auto save
-                                FI.save();
-                                MESS.information(name);
+                                let notError = FI.save();
+                                if (notError) {
+                                    MESS.information(name);
+                                }
                             }
                             else {
-                                FI.savePerso(message, numberOfSauvPerso);
-                                MESS.information(name, false);
+                                let notError = FI.savePerso(message, numberOfSauvPerso);
+                                if (notError) {
+                                    MESS.information(name, false);
+                                }
                             }
                         }
                     }
@@ -98,10 +102,10 @@ function activate(context) {
         run(event, true);
     }));
     //commands
-    SUB.push(vscode.commands.registerCommand('SLV-copy.copy', () => 
+    SUB.push(vscode.commands.registerCommand("SLV-copy.copy", () => 
     //recovery of the file opened in the text editor
     run(vscode.window.activeTextEditor.document, true)));
-    SUB.push(vscode.commands.registerCommand('SLV-copy.manuelle', async (uri) => {
+    SUB.push(vscode.commands.registerCommand("SLV-copy.manuelle", async (uri) => {
         let fileName = "";
         if (typeof uri === "undefined") {
             fileName = vscode.window.activeTextEditor.document.fileName;
@@ -110,7 +114,7 @@ function activate(context) {
             fileName = uri.fsPath;
         }
         //recovery of the file opened in the text editor
-        MESS.showInputBox().then(value => {
+        MESS.showInputBox().then((value) => {
             if (!value) {
                 return;
             }
@@ -120,7 +124,7 @@ function activate(context) {
         });
     }));
     //commands
-    SUB.push(vscode.commands.registerCommand('SLV-copy.cleanUp', async () => MESS.showQuickPick(keyValueFolder).then((value) => {
+    SUB.push(vscode.commands.registerCommand("SLV-copy.cleanUp", async () => MESS.showQuickPick(keyValueFolder).then((value) => {
         if (value !== undefined) {
             MESS.statusBarClean();
             FI.clean(vscode.workspace.getConfiguration("SLV-copy"), value.label);
