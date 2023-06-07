@@ -1,138 +1,141 @@
 {
-	"name": "slvcopy",
-	"displayName": "SLV-copy",
-	"description": "Generates a backup file when opened in the text editor",
-	"version": "2.1.0",
-	"publisher": "BlueStier",
-	"engines": {
-		"vscode": "^1.42.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onStartupFinished",
-		"onCommand:SLV-copy.copy",
-		"onCommand:SLV-copy.manuelle"
-	],
-	"icon": "icon.png",
-	"galleryBanner": {
-		"color": "#e8e030",
-		"theme": "light"
-	},
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [{
-				"command": "SLV-copy.copy",
-				"title": "SLV-copy : auto backup"
-			},
-			{
-				"command": "SLV-copy.manuelle",
-				"title": "SLV-copy : manual backup"
-			},
-			{
-				"command": "SLV-copy.cleanUp",
-				"title": "SLV-copy : directory cleaning"
-			}
-		],
-		"configuration": {
-			"title": "SLV-copy",
-			"properties": {
-				"SLV-copy.useDayFolder": {
-					"type": "boolean",
-					"default": false,
-					"description": "Create a daily backup subfolder"
-				},
-				"SLV-copy.deleteDelay": {
-					"type": "number",
-					"default": 12,
-					"enum": [
-						3,
-						6,
-						9,
-						12,
-						18,
-						24
-					],
-					"description": "Number of months of backup, files with an earlier date will be deleted from the backup directory (all users combined) when using the clean command"
-				},
-				"SLV-copy.numberOfSauvPerso": {
-					"type": "number",
-					"default": 5,
-					"enum": [
-						1,
-						2,
-						3,
-						4,
-						5
-					],
-					"description": "Number of personal backups kept (from the most recent to the oldest) when using the clean function"
-				},
-				"SLV-copy.keyValueFolder": {
-					"type": "Array",
-					"default": [],
-					"description": "Backup array based on initial file path. Example: 'SLV-copy.keyValueFolder' : [['c:\\Users\\dossierInitial1\\',C:/Users/dossierSauv1/'],['c:\\Users\\dossierInitial2\\','C:/Users/dossierSauv2/']]"
-				},
-				"SLV-copy.authorizedFileType": {
-					"type": "array",
-					"default": [
-						".html",
-						".css",
-						".scss",
-						".js",
-						".json"
-					],
-					"description": "Array of file extension definitions that will be saved. By default : ['html','css','scss','js']."
-				},
-				"SLV-copy.excludeFolder": {
-					"type": "array",
-					"default": [],
-					"description": "Folder exclusion array so that the backup does not occur. Example : 'SLV-copy.excludeFolder:['c:\\Users\\dossierInitial1\\','c:\\Users\\dossierInitial2\\']'"
-				},
-				"SLV-copy.showWarningExtensionFile": {
-					"type": "boolean",
-					"default": true,
-					"description": "Checked if you want to see warning message when extension file isn't in autorized file type otherwise unchecked"
-				},
-				"SLV-copy.showWarningMessageFolder": {
-					"type": "boolean",
-					"default": true,
-					"description": "Checked if you want to see warning message when initial file directory isn't in keyValueFolder otherwise unchecked"
-				}
-			}
-		},
-		"menus": {
-			"explorer/context": [{
-				"command": "SLV-copy.manuelle",
-				"group": "5_cutcopypaste@1"
-			}]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js",
-		"deploy": "vsce publish --yarn"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.0.0",
-		"@types/node": "14.x",
-		"@types/vscode": "^1.42.0",
-		"@typescript-eslint/eslint-plugin": "^5.9.1",
-		"@typescript-eslint/parser": "^5.9.1",
-		"@vscode/test-electron": "^2.0.3",
-		"eslint": "^8.6.0",
-		"glob": "^7.2.0",
-		"mocha": "^9.1.3",
-		"typescript": "^4.5.4",
-		"vsce": "^2.14.0"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/BlueStier/SLV-copy"
-	}
+  "name": "slvcopy",
+  "displayName": "SLV-copy",
+  "description": "Generates a backup file when opened in the text editor",
+  "version": "2.2.0",
+  "publisher": "BlueStier",
+  "engines": {
+    "vscode": "^1.42.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:SLV-copy.copy",
+    "onCommand:SLV-copy.manuelle"
+  ],
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#e8e030",
+    "theme": "light"
+  },
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "SLV-copy.copy",
+        "title": "SLV-copy : auto backup"
+      },
+      {
+        "command": "SLV-copy.manuelle",
+        "title": "SLV-copy : manual backup"
+      },
+      {
+        "command": "SLV-copy.cleanUp",
+        "title": "SLV-copy : directory cleaning"
+      }
+    ],
+    "configuration": {
+      "title": "SLV-copy",
+      "properties": {
+        "SLV-copy.useDayFolder": {
+          "type": "boolean",
+          "default": false,
+          "description": "Create a daily backup subfolder"
+        },
+        "SLV-copy.deleteDelay": {
+          "type": "number",
+          "default": 12,
+          "enum": [
+            3,
+            6,
+            9,
+            12,
+            18,
+            24
+          ],
+          "description": "Number of months of backup, files with an earlier date will be deleted from the backup directory (all users combined) when using the clean command"
+        },
+        "SLV-copy.numberOfSauvPerso": {
+          "type": "number",
+          "default": 5,
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "description": "Number of personal backups kept (from the most recent to the oldest) when using the clean function"
+        },
+        "SLV-copy.keyValueFolder": {
+          "type": "Array",
+          "default": [],
+          "description": "Backup array based on initial file path. Example: 'SLV-copy.keyValueFolder' : [['c:\\Users\\dossierInitial1\\',C:/Users/dossierSauv1/'],['c:\\Users\\dossierInitial2\\','C:/Users/dossierSauv2/']]"
+        },
+        "SLV-copy.authorizedFileType": {
+          "type": "array",
+          "default": [
+            ".html",
+            ".css",
+            ".scss",
+            ".js",
+            ".json"
+          ],
+          "description": "Array of file extension definitions that will be saved. By default : ['html','css','scss','js']."
+        },
+        "SLV-copy.excludeFolder": {
+          "type": "array",
+          "default": [],
+          "description": "Folder exclusion array so that the backup does not occur. Example : 'SLV-copy.excludeFolder:['c:\\Users\\dossierInitial1\\','c:\\Users\\dossierInitial2\\']'"
+        },
+        "SLV-copy.showWarningExtensionFile": {
+          "type": "boolean",
+          "default": true,
+          "description": "Checked if you want to see warning message when extension file isn't in autorized file type otherwise unchecked"
+        },
+        "SLV-copy.showWarningMessageFolder": {
+          "type": "boolean",
+          "default": true,
+          "description": "Checked if you want to see warning message when initial file directory isn't in keyValueFolder otherwise unchecked"
+        }
+      }
+    },
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "SLV-copy.manuelle",
+          "group": "5_cutcopypaste@1"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "deploy": "vsce publish --yarn"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.42.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
+    "@vscode/test-electron": "^2.0.3",
+    "eslint": "^8.6.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.1.3",
+    "typescript": "^4.5.4",
+    "vsce": "^2.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlueStier/SLV-copy"
+  }
 }
