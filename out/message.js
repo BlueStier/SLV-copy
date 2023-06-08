@@ -104,10 +104,9 @@ class Message {
             keyValueFolder.forEach((value) => {
                 optionFolder.push(value[1].toString());
             });
-            optionFolder.push("All");
         }
         else {
-            optionFolder.push("All");
+            optionFolder.push("No directory");
         }
         let options = optionFolder.map((res) => {
             return { label: `${res}` };

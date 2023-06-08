@@ -35,3 +35,7 @@ Minor change : compatibility with UNC hosts VScode version 1.78 and higher
 # 2.2.1
 
 Fix bug : compatibility with VScode version 1.78 and higher for clean repository feature
+
+# 2.3.0
+
+Update cleanUpRepository.js
