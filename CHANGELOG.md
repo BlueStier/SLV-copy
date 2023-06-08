@@ -31,3 +31,7 @@ Fix [Issue](https://github.com/BlueStier/SLV-copy/issues/2) "Do you confirm the 
 # 2.2.0
 
 Minor change : compatibility with UNC hosts VScode version 1.78 and higher
+
+# 2.2.1
+
+Fix bug : compatibility with VScode version 1.78 and higher for clean repository feature
